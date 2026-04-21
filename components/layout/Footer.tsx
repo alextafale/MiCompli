@@ -3,15 +3,17 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Instagram, Facebook, Twitter, MailOutlined, Phone, Favorite } from '@mui/icons-material'
+import { 
+  Instagram, 
+  Facebook, 
+  Twitter, 
+  MailOutlined, 
+  Phone, 
+  Favorite 
+} from '@mui/icons-material'
 import { motion } from 'framer-motion'
 
-interface SocialIconProps {
-  icon: any
-  href: string
-}
-
-function SocialIcon({ icon: Icon, href }: SocialIconProps) {
+function SocialIcon({ icon: Icon, href }: { icon: any; href: string }) {
   return (
     <a 
       href={href} 
@@ -22,12 +24,7 @@ function SocialIcon({ icon: Icon, href }: SocialIconProps) {
   )
 }
 
-interface FooterLinkProps {
-  href: string
-  children: React.ReactNode
-}
-
-function FooterLink({ href, children }: FooterLinkProps) {
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
       <Link href={href} className="text-[15px] font-medium text-white/40 hover:text-rose transition-all duration-300 block">
@@ -38,10 +35,13 @@ function FooterLink({ href, children }: FooterLinkProps) {
 }
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="bg-[#0A0A0A] text-white pt-32 pb-12 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+          {/* Col 1 */}
           <div className="space-y-8">
             <motion.div
               whileHover={{ scale: 1.05, filter: 'brightness(1.1)' }}
@@ -54,6 +54,7 @@ export default function Footer() {
                   alt="MiCompli Logo"
                   fill
                   className="object-contain"
+                  priority
                 />
               </Link>
             </motion.div>
@@ -67,6 +68,7 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Col 2 */}
           <div>
             <h4 className="font-display text-[11px] font-bold uppercase tracking-[3px] mb-8 text-white">Navegación</h4>
             <ul className="space-y-5">
@@ -77,6 +79,7 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Col 3 */}
           <div>
             <h4 className="font-display text-[11px] font-bold uppercase tracking-[3px] mb-8 text-white">Ayuda</h4>
             <ul className="space-y-5">
@@ -87,6 +90,7 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Col 4 */}
           <div>
             <h4 className="font-display text-[11px] font-bold uppercase tracking-[3px] mb-8 text-white">Contacto</h4>
             <ul className="space-y-5">
@@ -109,6 +113,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Large Decorative Logo */}
         <div className="py-20 border-t border-white/5 flex justify-center overflow-hidden">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -125,9 +130,10 @@ export default function Footer() {
           </motion.div>
         </div>
 
+        {/* Copyright */}
         <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[11px] text-white/20 uppercase tracking-[2px] font-bold">
-            © {new Date().getFullYear()} MiCompli. Todos los derechos reservados.
+            © {currentYear} MiCompli. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-4">
             <p className="text-[11px] text-white/20 uppercase tracking-[2px] font-bold flex items-center gap-2">

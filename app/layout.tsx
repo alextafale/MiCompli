@@ -13,6 +13,9 @@ export const metadata: Metadata = {
     description: '¿A quién vamos a sorprender hoy?',
     type: 'website',
   },
+  icons: {
+    icon: '/images/micompliLOGO.jpeg',
+  },
 }
 
 export default function RootLayout({
