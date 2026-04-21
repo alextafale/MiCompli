@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+}
+
+@layer base {
+  * { 
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html { 
+    scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  body {
+    @apply bg-cream text-ink antialiased selection:bg-rose-mid/30 selection:text-ink;
+    font-family: var(--font-inter);
+  }
+  h1, h2, h3, h4, h5, h6 { 
+    @apply font-display tracking-tight; 
+  }
+
+  /* Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-cream;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-rose-mid/30 rounded-full border-4 border-cream hover:bg-rose-mid/50 transition-colors;
+  }
+}
+
+@layer utilities {
+  .font-serif { font-family: var(--font-playfair); }
+  .font-display { font-family: var(--font-outfit); }
+  
+  .glass {
+    @apply bg-white/40 backdrop-blur-xl border border-white/40 shadow-premium;
+  }
+  
+  .glass-dark {
+    @apply bg-ink/10 backdrop-blur-xl border border-white/5 shadow-premium;
+  }
+
+  .text-glow-rose {
+    text-shadow: 0 0 30px rgba(212,83,126,0.15);
+  }
+
+  .mask-gradient {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+}
