@@ -48,7 +48,7 @@ export default function Footer() {
               transition={{ type: 'spring', stiffness: 400, damping: 10 }}
               className="inline-block"
             >
-              <Link href="/" className="inline-block relative h-14 w-52 opacity-60 hover:opacity-100 transition-all duration-300 invert grayscale">
+              <Link href="/" className="inline-block relative h-24 w-80 opacity-60 hover:opacity-100 transition-all duration-300 invert grayscale">
                 <Image
                   src="/images/micompliLOGO.jpeg"
                   alt="MiCompli Logo"
@@ -119,7 +119,7 @@ export default function Footer() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="relative h-24 w-80 opacity-[0.05] grayscale invert pointer-events-none"
+            className="relative h-48 w-160 opacity-[0.05] grayscale invert pointer-events-none"
           >
              <Image
                 src="/images/micompliLOGO.jpeg"

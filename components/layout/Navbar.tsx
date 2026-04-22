@@ -33,7 +33,7 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as const }}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 h-[64px] transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 h-[80px] transition-all duration-500 ${
         isScrolled 
           ? 'bg-cream/40 backdrop-blur-xl border-b border-rose/5 shadow-premium' 
           : 'bg-transparent'
@@ -49,7 +49,7 @@ export default function Navbar() {
             filter: 'drop-shadow(0 0 15px rgba(212,83,126,0.2))'
           }}
           whileTap={{ scale: 0.95 }}
-          className="relative h-11 w-44"
+          className="relative h-18 w-72"
         >
           <Image
             src="/images/micompliLOGO.jpeg"

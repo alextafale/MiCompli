@@ -79,9 +79,9 @@ export default function LoginPage() {
         <div className="w-full max-w-sm relative">
 
           {/* Logo mobile */}
-          <div className="lg:hidden flex items-center gap-2 mb-10">
-            <FavoriteOutlined className="text-rose" sx={{ fontSize: 20 }} />
-            <span className="font-serif text-2xl">Mi<span className="text-rose italic">Compli</span></span>
+          <div className="lg:hidden flex flex-col items-start gap-3 mb-12">
+            <FavoriteOutlined className="text-rose" sx={{ fontSize: 48 }} />
+            <span className="font-serif text-5xl">Mi<span className="text-rose italic">Compli</span></span>
           </div>
 
           <div className="mb-10">

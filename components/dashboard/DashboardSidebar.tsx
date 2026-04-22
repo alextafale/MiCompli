@@ -40,7 +40,7 @@ export default function DashboardSidebar({ profile }: { profile: Profile | null 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative h-14 w-48 mb-2"
+          className="relative h-24 w-80 mb-4"
         >
           <Image
             src="/images/micompliLOGO.jpeg"

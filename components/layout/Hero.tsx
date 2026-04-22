@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 
 export default function Hero() {
@@ -25,7 +26,7 @@ export default function Hero() {
   }
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-[80px] relative overflow-hidden bg-white">
+    <section className="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-[100px] relative overflow-hidden bg-white">
       {/* Dynamic Background */}
       <motion.div
         animate={{
@@ -46,8 +47,21 @@ export default function Hero() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-4xl"
+        className="relative z-10 max-w-4xl flex flex-col items-center"
       >
+        <motion.div
+          variants={itemVariants}
+          className="relative h-24 w-80 mb-8"
+        >
+          <Image
+            src="/images/micompliLOGO.jpeg"
+            alt="MiCompli Logo Large"
+            fill
+            className="object-contain"
+            priority
+          />
+        </motion.div>
+
         <motion.div
           variants={itemVariants}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose/5 border border-rose/10 mb-10"
