@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import type { Database } from '@/types/supabase'
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -42,9 +43,10 @@ export default function RegisterPage() {
 
       // Actualizar rol si es cómplice
       if (form.rol === 'complice' && data.user) {
+        const updateData = { role: 'complice' } as Record<string, string>
         await supabase
           .from('profiles')
-          .update({ role: 'complice' })
+          .update(updateData)
           .eq('id', data.user.id)
       }
 
@@ -80,8 +82,8 @@ export default function RegisterPage() {
               key={r.val}
               onClick={() => setForm(f => ({ ...f, rol: r.val as 'cliente' | 'complice' }))}
               className={`flex flex-col items-center gap-1 py-3 rounded-xl text-xs font-medium transition-all ${form.rol === r.val
-                  ? 'bg-white text-rose shadow-sm border border-rose/20'
-                  : 'text-ink-mid hover:text-ink'
+                ? 'bg-white text-rose shadow-sm border border-rose/20'
+                : 'text-ink-mid hover:text-ink'
                 }`}
             >
               <span className="text-lg">{r.emoji}</span>
