@@ -43,10 +43,9 @@ export default function RegisterPage() {
 
       // Actualizar rol si es cómplice
       if (form.rol === 'complice' && data.user) {
-        const updateData = { role: 'complice' } as Record<string, string>
-        await supabase
+        await (supabase as any)
           .from('profiles')
-          .update(updateData)
+          .update({ role: 'complice' })
           .eq('id', data.user.id)
       }
 
