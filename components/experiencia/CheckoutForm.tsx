@@ -27,20 +27,23 @@ export default function CheckoutForm() {
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data, error } = await supabase.from('ordenes').insert({
-        cliente_id: user?.id ?? null,
-        experiencia_id: cart.experiencia_id,
-        estado: 'pendiente',
-        fecha_deseada: form.fecha,
-        para_nombre: cart.para_nombre || 'Sorpresa',
-        mensaje_personal: cart.mensaje_personal || null,
-        total: cart.total,
-        addons_seleccionados: cart.addons,
-      }).select('numero').single()
-
+      const { data, error } = await supabase
+        .from('ordenes')
+        .insert({
+          cliente_id: user?.id ?? null,
+          experiencia_id: cart.experiencia_id,
+          estado: 'pendiente',
+          fecha_deseada: form.fecha,
+          para_nombre: cart.para_nombre || 'Sorpresa',
+          mensaje_personal: cart.mensaje_personal || null,
+          total: cart.total,
+          addons_seleccionados: cart.addons,
+        } as any)
+        .select('numero')
+        .single() as { data: { numero: string } | null, error: any }
       if (error) throw error
       sessionStorage.removeItem('mc_cart')
-      router.push(`/success?numero=${data.numero}&total=${cart.total}`)
+      router.push(`/success?numero=${data?.numero ?? ''}&total=${cart.total}`)
     } catch (e: any) {
       toast.error('Error al confirmar: ' + e.message)
     } finally {
