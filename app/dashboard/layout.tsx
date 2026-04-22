@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar'
+import type { Tables } from '@/types/supabase'
 
 export default async function DashboardLayout({
   children,
@@ -12,11 +13,13 @@ export default async function DashboardLayout({
 
   if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
+  const { data } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single()
+
+  const profile = data as Tables<'profiles'> | null
 
   if (profile?.role === 'cliente') redirect('/')
 
