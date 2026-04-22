@@ -44,7 +44,7 @@ export default function RegisterPage() {
       if (form.rol === 'complice' && data.user) {
         await supabase
           .from('profiles')
-          .update({ role: 'complice' } as any)
+          .update({ role: 'complice' })
           .eq('id', data.user.id)
       }
 
@@ -78,7 +78,7 @@ export default function RegisterPage() {
           ].map(r => (
             <button
               key={r.val}
-              onClick={() => setForm(f => ({ ...f, rol: r.val as any }))}
+              onClick={() => setForm(f => ({ ...f, rol: r.val as 'cliente' | 'complice' }))}
               className={`flex flex-col items-center gap-1 py-3 rounded-xl text-xs font-medium transition-all ${form.rol === r.val
                   ? 'bg-white text-rose shadow-sm border border-rose/20'
                   : 'text-ink-mid hover:text-ink'
