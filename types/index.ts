@@ -1,5 +1,4 @@
-import type { Database } from './database.types'
-
+import type { Database } from './supabase'
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type Experiencia = Database['public']['Tables']['experiencias']['Row']
 export type ExperienciaAddon = Database['public']['Tables']['experiencia_addons']['Row']
