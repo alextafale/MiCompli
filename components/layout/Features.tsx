@@ -7,7 +7,8 @@ import {
   AutoAwesome, 
   AccessTime, 
   Favorite, 
-  EmojiEvents 
+  EmojiEvents,
+  Videocam as Video
 } from '@mui/icons-material'
 
 const features = [
@@ -46,6 +47,12 @@ const features = [
     desc: 'Nos apasiona crear conexiones emocionales que perduren en el tiempo.',
     icon: Favorite,
     color: 'text-gold'
+  },
+  {
+    title: 'Evidencia en video',
+    desc: 'Te entregamos un video editado de la experiencia para que puedas revivirla cuando quieras.',
+    icon: Video,
+    color: 'text-rose'
   }
 ]
 

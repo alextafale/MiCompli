@@ -17,8 +17,8 @@ export default function Hero() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as const }
     },
@@ -27,28 +27,28 @@ export default function Hero() {
   return (
     <section className="min-h-screen flex flex-col items-center justify-center text-center px-6 pt-[80px] relative overflow-hidden bg-white">
       {/* Dynamic Background */}
-      <motion.div 
-        animate={{ 
+      <motion.div
+        animate={{
           scale: [1, 1.2, 1],
           opacity: [0.1, 0.2, 0.1],
         }}
-        transition={{ 
-          duration: 15, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut"
         }}
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(212,83,126,0.15),transparent_70%)]" 
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(212,83,126,0.15),transparent_70%)]"
       />
-      
+
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03] pointer-events-none" />
 
-      <motion.div 
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="relative z-10 max-w-4xl"
       >
-        <motion.div 
+        <motion.div
           variants={itemVariants}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose/5 border border-rose/10 mb-10"
         >
@@ -60,15 +60,15 @@ export default function Hero() {
             Plataforma de Experiencias Premium
           </p>
         </motion.div>
-        
-        <motion.h1 
+
+        <motion.h1
           variants={itemVariants}
           className="font-display text-[clamp(48px,8vw,88px)] font-bold leading-[1.05] tracking-[-0.04em] mb-8 text-ink text-glow-rose"
         >
-          Diseñamos momentos que{' '}
+          ¿A quien vamos a sorprender{' '} ?
           <span className="text-rose relative inline-block">
-            perduran
-            <motion.div 
+            hoy
+            <motion.div
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{ delay: 1.5, duration: 1, ease: "circOut" }}
@@ -76,15 +76,15 @@ export default function Hero() {
             />
           </span>
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           variants={itemVariants}
           className="text-[clamp(18px,2vw,22px)] text-ink/50 font-medium max-w-2xl mx-auto mb-16 leading-relaxed"
         >
           Convierte un simple gesto en una <span className="text-ink italic font-serif">experiencia inolvidable</span> orquestada por expertos.
         </motion.p>
-        
-        <motion.div 
+
+        <motion.div
           variants={itemVariants}
           className="flex gap-6 justify-center flex-wrap"
         >
