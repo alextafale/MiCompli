@@ -65,7 +65,7 @@ export default function Hero() {
           variants={itemVariants}
           className="font-display text-[clamp(48px,8vw,88px)] font-bold leading-[1.05] tracking-[-0.04em] mb-8 text-ink text-glow-rose"
         >
-          ¿A quien vamos a sorprender{' '} ?
+          ¿A quien vamos a sorprender{' '}
           <span className="text-rose relative inline-block">
             hoy
             <motion.div
@@ -75,6 +75,7 @@ export default function Hero() {
               className="absolute -bottom-2 left-0 h-[4px] bg-rose/20 rounded-full"
             />
           </span>
+          ?
         </motion.h1>
 
         <motion.p
