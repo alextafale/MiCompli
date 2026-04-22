@@ -10,17 +10,25 @@ import { getExperienceImage } from '@/lib/utils/image-fallbacks'
 
 export default function ExperienciaBuilder({ experiencia }: { experiencia: ExperienciaConAddons }) {
   const router = useRouter()
-  const addons = experiencia.addons ?? []
-
+  const addons = (experiencia.addons ?? []) as Array<{
+    id: string
+    tipo: 'ubicacion' | 'musica' | 'extra'
+    nombre: string
+    precio: number
+    icon: string
+    descripcion: string | null
+    orden: number | null
+    experiencia_id: string | null
+  }>
   const ubicaciones = addons.filter(a => a.tipo === 'ubicacion')
-  const musica      = addons.filter(a => a.tipo === 'musica')
-  const extras      = addons.filter(a => a.tipo === 'extra')
+  const musica = addons.filter(a => a.tipo === 'musica')
+  const extras = addons.filter(a => a.tipo === 'extra')
 
-  const [selLoc,    setSelLoc]    = useState<string | null>(null)
-  const [selMusic,  setSelMusic]  = useState<string | null>(null)
+  const [selLoc, setSelLoc] = useState<string | null>(null)
+  const [selMusic, setSelMusic] = useState<string | null>(null)
   const [selExtras, setSelExtras] = useState<string[]>([])
   const [paraNombre, setParaNombre] = useState('')
-  const [mensaje,    setMensaje]    = useState('')
+  const [mensaje, setMensaje] = useState('')
 
   const total = useMemo(() => {
     let t = experiencia.precio_base
@@ -81,7 +89,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-            
+
             {/* Overlay Icon for specific mood if no image was in DB */}
             {!experiencia.imagen_url && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -89,7 +97,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
               </div>
             )}
           </motion.div>
-          
+
           {/* Subtle overlay info if needed */}
           <div className="absolute bottom-6 left-8 z-10">
             <p className="text-[11px] tracking-[3px] text-white/80 uppercase font-bold mb-1">
@@ -97,7 +105,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
             </p>
           </div>
         </div>
-        
+
         <h1 className="font-serif text-4xl mb-3 text-rose-dark">{experiencia.nombre}</h1>
         <p className="text-ink-mid text-lg leading-relaxed mb-10 font-light">{experiencia.descripcion}</p>
 
@@ -173,7 +181,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
       </motion.div>
 
       {/* RIGHT — SUMMARY */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.2 } as const}
@@ -183,10 +191,10 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
           <h2 className="font-serif text-2xl mb-6 pb-5 border-b border-black/5 text-rose-dark flex items-center gap-2">
             Tu experiencia <FilterVintage className="text-rose w-6 h-6" />
           </h2>
-          
+
           <div className="space-y-3 mb-8">
             <SummaryLine label={experiencia.nombre} value={`$${experiencia.precio_base.toLocaleString()}`} />
-            
+
             <AnimatePresence>
               {selLoc && (
                 <SummaryLineMotion
@@ -213,7 +221,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
 
           <div className="flex justify-between items-end font-serif pt-6 border-t border-black/5 mb-8">
             <span className="text-ink-mid text-sm font-sans mb-1 uppercase tracking-widest">Total</span>
-            <motion.span 
+            <motion.span
               key={total}
               initial={{ scale: 1.1, color: '#D4537E' }}
               animate={{ scale: 1, color: '#1C1612' }}
@@ -231,7 +239,7 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
           >
             Confirmar experiencia →
           </motion.button>
-          
+
           <p className="text-center text-[10px] uppercase tracking-wider text-ink-light mt-6 font-semibold flex items-center justify-center gap-2">
             <Star className="w-3 h-3 text-rose" /> tus cómplices están listos <Star className="w-3 h-3 text-rose" />
           </p>
@@ -262,11 +270,10 @@ function Chip({ icon, name, price, selected, onClick }: {
       whileHover={{ y: -4 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`rounded-[20px] p-5 text-center border-[1.5px] transition-all flex flex-col items-center justify-center gap-1 ${
-        selected 
-          ? 'border-rose bg-rose-light/50 shadow-sm ring-4 ring-rose/5' 
+      className={`rounded-[20px] p-5 text-center border-[1.5px] transition-all flex flex-col items-center justify-center gap-1 ${selected
+          ? 'border-rose bg-rose-light/50 shadow-sm ring-4 ring-rose/5'
           : 'border-black/5 bg-white hover:border-rose/30 hover:bg-cream/30'
-      }`}
+        }`}
     >
       <div className="mb-1">
         <IconMapper icon={icon} className="text-3xl text-rose" />
@@ -286,7 +293,7 @@ function AddonRow({ icon, name, price, selected, onClick, isLast }: {
       className={`w-full flex items-center justify-between py-4 px-6 transition-all hover:bg-cream/40 ${!isLast ? 'border-b border-black/5' : ''}`}
     >
       <div className="flex items-center gap-4">
-        <motion.div 
+        <motion.div
           animate={{ rotate: selected ? 360 : 0 }}
           className="text-2xl"
         >
@@ -297,8 +304,8 @@ function AddonRow({ icon, name, price, selected, onClick, isLast }: {
           <div className="text-[10px] text-ink-mid uppercase font-semibold">+$${price} MXN</div>
         </div>
       </div>
-      <motion.div 
-        animate={{ 
+      <motion.div
+        animate={{
           backgroundColor: selected ? '#D4537E' : 'transparent',
           borderColor: selected ? '#D4537E' : '#B4B2A9',
           scale: selected ? ([1, 1.2, 1] as const) : 1
@@ -320,11 +327,11 @@ function SummaryLine({ label, value }: { label: string; value: string }) {
   )
 }
 
-function SummaryLineMotion({ label, value, icon: Icon, emoji }: { 
-  label: string; value: string; icon?: any; emoji?: string 
+function SummaryLineMotion({ label, value, icon: Icon, emoji }: {
+  label: string; value: string; icon?: any; emoji?: string
 }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
