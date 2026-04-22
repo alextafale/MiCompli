@@ -44,7 +44,7 @@ export default function RegisterPage() {
       if (form.rol === 'complice' && data.user) {
         await supabase
           .from('profiles')
-          .update({ role: 'complice' })
+          .update({ role: 'complice' } as any)
           .eq('id', data.user.id)
       }
 
@@ -73,17 +73,16 @@ export default function RegisterPage() {
         {/* Rol selector */}
         <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-cream rounded-2xl">
           {[
-            { val: 'cliente',  emoji: '🎁', label: 'Quiero sorprender' },
+            { val: 'cliente', emoji: '🎁', label: 'Quiero sorprender' },
             { val: 'complice', emoji: '✨', label: 'Soy Cómplice' },
           ].map(r => (
             <button
               key={r.val}
               onClick={() => setForm(f => ({ ...f, rol: r.val as any }))}
-              className={`flex flex-col items-center gap-1 py-3 rounded-xl text-xs font-medium transition-all ${
-                form.rol === r.val
+              className={`flex flex-col items-center gap-1 py-3 rounded-xl text-xs font-medium transition-all ${form.rol === r.val
                   ? 'bg-white text-rose shadow-sm border border-rose/20'
                   : 'text-ink-mid hover:text-ink'
-              }`}
+                }`}
             >
               <span className="text-lg">{r.emoji}</span>
               {r.label}
