@@ -12,19 +12,27 @@ import {
   ArrowForward,
   CardGiftcardOutlined,
   AutoAwesome,
+  Business,
 } from '@mui/icons-material'
+
+type Rol = 'cliente' | 'complice' | 'empresa'
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
-    nombre: '', email: '', password: '', confirmar: '', rol: 'cliente' as 'cliente' | 'complice',
+    nombre: '',
+    email: '',
+    password: '',
+    confirmar: '',
+    rol: 'cliente' as Rol,
+    // Campos empresa
+    nombre_empresa: '',
+    industria: '',
+    tamano: '1-10',
   })
   const [loading, setLoading] = useState(false)
   const [focused, setFocused] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
-
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }))
 
   const handleRegister = async () => {
     if (!form.nombre || !form.email || !form.password) {
@@ -39,6 +47,11 @@ export default function RegisterPage() {
       toast.error('La contraseña debe tener al menos 6 caracteres')
       return
     }
+    if (form.rol === 'empresa' && !form.nombre_empresa) {
+      toast.error('Ingresa el nombre de tu empresa')
+      return
+    }
+
     setLoading(true)
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -47,16 +60,38 @@ export default function RegisterPage() {
         options: { data: { full_name: form.nombre } },
       })
       if (error) throw error
+      if (!data.user) throw new Error('No se pudo crear el usuario')
 
-      if (form.rol === 'complice' && data.user) {
+      // Actualizar rol en profiles
+      if (form.rol !== 'cliente') {
         await (supabase as any)
           .from('profiles')
-          .update({ role: 'complice' })
+          .update({ role: form.rol })
           .eq('id', data.user.id)
       }
 
+      // Si es empresa, crear registro en tabla empresas
+      if (form.rol === 'empresa') {
+        const { error: empresaError } = await (supabase as any)
+          .from('empresas')
+          .insert({
+            perfil_id: data.user.id,
+            nombre_empresa: form.nombre_empresa,
+            industria: form.industria || null,
+            tamano: form.tamano,
+          })
+        if (empresaError) throw empresaError
+      }
+
       toast.success('¡Cuenta creada! Revisa tu email para confirmar.')
-      router.push(form.rol === 'complice' ? '/dashboard' : '/')
+
+      if (form.rol === 'empresa') {
+        router.push('/dashboard/empresa')
+      } else if (form.rol === 'complice') {
+        router.push('/dashboard')
+      } else {
+        router.push('/')
+      }
       router.refresh()
     } catch (e: any) {
       toast.error(e.message)
@@ -73,11 +108,29 @@ export default function RegisterPage() {
       desc: 'Organiza experiencias únicas',
     },
     {
+      val: 'empresa',
+      icon: <Business sx={{ fontSize: 22 }} />,
+      label: 'Soy Empresa',
+      desc: 'Gifting para mi equipo',
+    },
+    {
       val: 'complice',
       icon: <AutoAwesome sx={{ fontSize: 22 }} />,
       label: 'Soy Cómplice',
       desc: 'Haz la magia posible',
     },
+  ]
+
+  const industriaOpts = [
+    'Tecnología', 'Salud', 'Retail', 'Manufactura',
+    'Servicios financieros', 'Educación', 'Alimentos', 'Otro',
+  ]
+
+  const tamanoOpts = [
+    { val: '1-10', label: '1–10 empleados' },
+    { val: '11-50', label: '11–50 empleados' },
+    { val: '51-200', label: '51–200 empleados' },
+    { val: '200+', label: '200+ empleados' },
   ]
 
   return (
@@ -97,7 +150,6 @@ export default function RegisterPage() {
             <span className="text-xs tracking-[4px] uppercase font-semibold opacity-60">MiCompli</span>
             <FavoriteOutlined sx={{ fontSize: 16 }} className="opacity-60" />
           </div>
-
           <h2 className="font-serif text-5xl leading-tight mb-6">
             Empieza a<br />
             <span className="italic opacity-80">sorprender.</span>
@@ -105,8 +157,6 @@ export default function RegisterPage() {
           <p className="text-white/60 text-sm leading-relaxed max-w-xs mx-auto">
             Únete a la comunidad que convierte los momentos especiales en recuerdos inolvidables.
           </p>
-
-          {/* Role preview cards */}
           <div className="mt-14 flex flex-col gap-3">
             {roles.map((r, i) => (
               <div key={i} className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl px-5 py-4 text-left">
@@ -142,17 +192,17 @@ export default function RegisterPage() {
           </div>
 
           {/* Role selector */}
-          <div className="grid grid-cols-2 gap-2 mb-7 p-1.5 bg-black/5 rounded-2xl">
+          <div className="grid grid-cols-3 gap-2 mb-7 p-1.5 bg-black/5 rounded-2xl">
             {roles.map(r => (
               <button
                 key={r.val}
-                onClick={() => setForm(f => ({ ...f, rol: r.val as 'cliente' | 'complice' }))}
+                onClick={() => setForm(f => ({ ...f, rol: r.val as Rol }))}
                 className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl text-xs font-semibold transition-all duration-200 ${form.rol === r.val
                     ? 'bg-white text-rose shadow-sm border border-rose/15 scale-[1.02]'
-                    : 'text-ink-mid hover:text-ink'
+                    : 'text-ink/50 hover:text-ink'
                   }`}
               >
-                <span className={`transition-colors ${form.rol === r.val ? 'text-rose' : 'text-ink-mid'}`}>
+                <span className={form.rol === r.val ? 'text-rose' : 'text-ink/40'}>
                   {r.icon}
                 </span>
                 {r.label}
@@ -160,10 +210,10 @@ export default function RegisterPage() {
             ))}
           </div>
 
-          {/* Fields */}
-          <div className="space-y-3.5 mb-7">
+          {/* Campos base */}
+          <div className="space-y-3.5 mb-4">
             <FloatingField
-              label="Tu nombre completo"
+              label={form.rol === 'empresa' ? 'Nombre del contacto' : 'Tu nombre completo'}
               type="text"
               value={form.nombre}
               onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
@@ -204,10 +254,56 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Campos extra para empresa */}
+          {form.rol === 'empresa' && (
+            <div className="space-y-3.5 mb-4 border-t border-black/5 pt-4">
+              <p className="text-[10px] uppercase tracking-[2px] text-rose font-bold">Datos de tu empresa</p>
+              <FloatingField
+                label="Nombre de la empresa"
+                type="text"
+                value={form.nombre_empresa}
+                onChange={e => setForm(f => ({ ...f, nombre_empresa: e.target.value }))}
+                focused={focused === 'empresa'}
+                onFocus={() => setFocused('empresa')}
+                onBlur={() => setFocused(null)}
+                icon={<Business sx={{ fontSize: 18 }} />}
+              />
+              <div>
+                <label className="block text-xs text-ink/50 mb-1.5">Industria</label>
+                <select
+                  value={form.industria}
+                  onChange={e => setForm(f => ({ ...f, industria: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-2xl border border-black/8 text-sm outline-none focus:border-rose bg-white text-ink/70"
+                >
+                  <option value="">Selecciona una industria</option>
+                  {industriaOpts.map(i => <option key={i} value={i}>{i}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-ink/50 mb-1.5">Tamaño de empresa</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {tamanoOpts.map(t => (
+                    <button
+                      key={t.val}
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, tamano: t.val }))}
+                      className={`py-2.5 rounded-xl border text-xs font-semibold transition-all ${form.tamano === t.val
+                          ? 'border-rose bg-rose/5 text-rose'
+                          : 'border-black/8 text-ink/50 hover:border-rose/30'
+                        }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <button
             onClick={handleRegister}
             disabled={loading}
-            className="group w-full bg-rose text-white rounded-2xl py-4 font-semibold text-sm hover:bg-rose-dark transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-rose/20 hover:shadow-xl hover:shadow-rose/25 hover:-translate-y-0.5 active:translate-y-0"
+            className="group w-full bg-rose text-white rounded-2xl py-4 font-semibold text-sm hover:bg-rose-dark transition-all duration-300 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-rose/20 hover:shadow-xl hover:shadow-rose/25 hover:-translate-y-0.5 active:translate-y-0 mt-6"
           >
             {loading ? (
               <>
@@ -216,7 +312,11 @@ export default function RegisterPage() {
               </>
             ) : (
               <>
-                {form.rol === 'complice' ? 'Unirme como Cómplice' : 'Crear mi cuenta'}
+                {form.rol === 'empresa'
+                  ? 'Crear cuenta empresarial'
+                  : form.rol === 'complice'
+                    ? 'Unirme como Cómplice'
+                    : 'Crear mi cuenta'}
                 <ArrowForward sx={{ fontSize: 18 }} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}
@@ -224,11 +324,11 @@ export default function RegisterPage() {
 
           <div className="flex items-center gap-4 my-5">
             <div className="flex-1 h-px bg-black/8" />
-            <span className="text-[11px] text-ink-mid uppercase tracking-widest">o</span>
+            <span className="text-[11px] text-ink/40 uppercase tracking-widest">o</span>
             <div className="flex-1 h-px bg-black/8" />
           </div>
 
-          <p className="text-center text-sm text-ink-mid">
+          <p className="text-center text-sm text-ink/50">
             ¿Ya tienes cuenta?{' '}
             <Link href="/login" className="text-rose font-semibold hover:underline underline-offset-2">
               Inicia sesión
@@ -255,10 +355,10 @@ function FloatingField({
   const active = focused || value.length > 0
   return (
     <div className="relative">
-      <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focused ? 'text-rose' : 'text-ink-mid/40'}`}>
+      <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focused ? 'text-rose' : 'text-ink/30'}`}>
         {icon}
       </div>
-      <label className={`absolute left-12 pointer-events-none transition-all duration-200 ${active ? 'top-2.5 text-[10px] font-bold tracking-wider uppercase text-rose' : 'top-1/2 -translate-y-1/2 text-sm text-ink-mid'
+      <label className={`absolute left-12 pointer-events-none transition-all duration-200 ${active ? 'top-2.5 text-[10px] font-bold tracking-wider uppercase text-rose' : 'top-1/2 -translate-y-1/2 text-sm text-ink/50'
         }`}>
         {label}
       </label>
