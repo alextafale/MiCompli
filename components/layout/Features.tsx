@@ -1,12 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { 
-  Shield, 
-  Groups, 
-  AutoAwesome, 
-  AccessTime, 
-  Favorite, 
+import {
+  Shield,
+  Groups,
+  AutoAwesome,
+  AccessTime,
+  Favorite,
   EmojiEvents,
   Videocam as Video
 } from '@mui/icons-material'
@@ -49,7 +49,7 @@ const features = [
     color: 'text-gold'
   },
   {
-    title: 'Evidencia en video',
+    tittle: 'Evidencia en video',
     desc: 'Te entregamos un video editado de la experiencia para que puedas revivirla cuando quieras.',
     icon: Video,
     color: 'text-rose'
@@ -62,7 +62,7 @@ export default function Features() {
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col lg:flex-row justify-between items-end mb-24 gap-10">
           <div className="max-w-2xl">
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -70,17 +70,17 @@ export default function Features() {
             >
               ¿Por qué MiCompli?
             </motion.p>
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="font-display text-[clamp(40px,5vw,56px)] font-bold tracking-tight text-ink leading-[1.1]"
             >
-              Diseñamos emociones, <br/> <span className="font-serif italic text-rose font-light">ejecutamos perfección.</span>
+              Diseñamos emociones, <br /> <span className="font-serif italic text-rose font-light">ejecutamos perfección.</span>
             </motion.h2>
           </div>
-          <motion.p 
+          <motion.p
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}

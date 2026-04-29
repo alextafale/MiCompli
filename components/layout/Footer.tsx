@@ -9,7 +9,8 @@ import {
   Twitter, 
   MailOutlined, 
   Phone, 
-  Favorite 
+  Favorite,
+  Star
 } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 
@@ -104,8 +105,8 @@ export default function Footer() {
               </li>
               <li className="pt-6">
                 <div className="inline-flex px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
-                  <p className="text-[10px] uppercase tracking-[2px] text-rose font-bold">
-                    ✦ Disponible 24/7 ✦
+                  <p className="text-[10px] uppercase tracking-[2px] text-rose font-bold flex items-center gap-1.5">
+                    <Star sx={{ fontSize: 10 }} /> Disponible 24/7 <Star sx={{ fontSize: 10 }} />
                   </p>
                 </div>
               </li>

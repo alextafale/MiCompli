@@ -19,7 +19,15 @@ import {
   EmojiEvents,
   Timer,
   Favorite,
-  HistoryEdu
+  HistoryEdu,
+  Cake,
+  SmartToy,
+  LocalBar,
+  WbTwilight,
+  CameraAlt,
+  BubbleChart,
+  Work,
+  CardGiftcard as CardGiftcardIcon,
 } from '@mui/icons-material'
 
 const EMOJI_MAP: Record<string, React.ElementType> = {
@@ -41,6 +49,20 @@ const EMOJI_MAP: Record<string, React.ElementType> = {
   '🏆': EmojiEvents,
   '⏱️': Timer,
   '❤️': Favorite,
+  '🌹': LocalFlorist,
+  '🍫': Cake,
+  '🧸': SmartToy,
+  '🍷': LocalBar,
+  '🌅': WbTwilight,
+  '🎂': Cake,
+  '📸': CameraAlt,
+  '💐': LocalFlorist,
+  '🎻': MusicNote,
+  '🫧': BubbleChart,
+  '✉️': MailOutlined,
+  '🎈': Celebration,
+  '💼': Work,
+  '🎀': CardGiftcardIcon,
 }
 
 interface IconMapperProps {

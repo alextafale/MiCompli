@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { Celebration, AutoAwesome } from '@mui/icons-material'
 
 export default function CheckoutForm() {
   const router = useRouter()
@@ -55,7 +56,7 @@ export default function CheckoutForm() {
 
   return (
     <div className="pt-[80px] max-w-lg mx-auto px-4 py-8">
-      <h1 className="font-serif text-3xl mb-2">Último paso 🎉</h1>
+      <h1 className="font-serif text-3xl mb-2 flex items-center gap-2">Último paso <Celebration className="text-rose" /></h1>
       <p className="text-ink-mid mb-8">Solo unos datos para coordinar a tus cómplices</p>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
@@ -66,7 +67,7 @@ export default function CheckoutForm() {
       <Field label="Fecha deseada *" value={form.fecha} onChange={v => setForm(f => ({ ...f, fecha: v }))} type="date" />
 
       <div className="bg-rose-light rounded-2xl p-4 my-6 text-sm text-rose-dark leading-relaxed">
-        ✨ Una vez confirmado, tu equipo de cómplices recibirá la orden y se coordinarán para que todo salga perfecto.
+        <AutoAwesome className="inline w-4 h-4 text-rose/60" /> Una vez confirmado, tu equipo de cómplices recibirá la orden y se coordinarán para que todo salga perfecto.
       </div>
 
       {/* Resumen */}
