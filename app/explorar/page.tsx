@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import CatalogGrid from '@/components/experiencia/CatalogGrid'
+import type { OcasionTipo, ExperienciaConAddons } from '@/types'
 
 export const revalidate = 60
 
@@ -31,7 +32,7 @@ export default async function ExplorarPage({
 
   // Filtro por ocasión desde URL
   if (params.ocasion) {
-    query = query.eq('ocasion', params.ocasion)
+    query = query.eq('ocasion', params.ocasion as OcasionTipo)
   }
 
   // Filtro legacy por categoría
@@ -45,7 +46,7 @@ export default async function ExplorarPage({
 
   return (
     <CatalogGrid
-      experiencias={experiencias ?? []}
+      experiencias={(experiencias ?? []) as ExperienciaConAddons[]}
       audienciaInicial={params.audiencia === 'b2b' ? 'b2b' : params.audiencia === 'b2c' ? 'b2c' : 'todos'}
     />
   )

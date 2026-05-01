@@ -7,19 +7,12 @@ export type Orden = Database['public']['Tables']['ordenes']['Row']
 export type OrdenComplice = Database['public']['Tables']['orden_complices']['Row']
 export type Servicio = Database['public']['Tables']['servicios']['Row']
 
-// ─── Enums agregados en Fase 2 ──────────────────────────
-export type AudienciaTipo = 'b2b' | 'b2c' | 'ambos'
-export type OcasionTipo =
-  | 'cumpleanos'
-  | 'aniversario_laboral'
-  | 'onboarding'
-  | 'reconocimiento'
-  | 'regalo_cliente'
-  | 'dia_especial'
-  | 'sin_ocasion'
+// ─── Enums derivados del schema de Supabase ──────────────
+export type AudienciaTipo = Database['public']['Enums']['audiencia_tipo']
+export type OcasionTipo = Database['public']['Enums']['ocasion_tipo']
 
 // ─── Extensiones de Experiencia ─────────────────────────
-export type ExperienciaConAddons = Experiencia & {
+export type ExperienciaConAddons = Omit<Experiencia, 'audiencia' | 'ocasion'> & {
   addons: ExperienciaAddon[]
   audiencia: AudienciaTipo
   ocasion: OcasionTipo

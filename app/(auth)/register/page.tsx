@@ -64,7 +64,7 @@ export default function RegisterPage() {
 
       // Actualizar rol en profiles
       if (form.rol !== 'cliente') {
-        await (supabase as any)
+        await supabase
           .from('profiles')
           .update({ role: form.rol })
           .eq('id', data.user.id)
@@ -72,7 +72,7 @@ export default function RegisterPage() {
 
       // Si es empresa, crear registro en tabla empresas
       if (form.rol === 'empresa') {
-        const { error: empresaError } = await (supabase as any)
+        const { error: empresaError } = await supabase
           .from('empresas')
           .insert({
             perfil_id: data.user.id,

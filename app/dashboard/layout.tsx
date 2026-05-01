@@ -22,6 +22,7 @@ export default async function DashboardLayout({
   const profile = data as Tables<'profiles'> | null
 
   if (profile?.role === 'cliente') redirect('/')
+  if (profile?.role === 'empresa') redirect('/dashboard/empresa')
 
   return (
     <div className="flex min-h-screen pt-[60px]">

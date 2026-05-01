@@ -143,10 +143,10 @@ export default function EmpresasPage() {
           >
             <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
               <Link
-                href="/explorar?audiencia=b2b"
+                href="/empresas/registro"
                 className="inline-block bg-ink text-white rounded-full px-10 py-4 text-[13px] font-bold uppercase tracking-[2px] hover:bg-rose transition-all duration-500 shadow-premium"
               >
-                Ver catálogo empresarial
+                Crear cuenta empresarial
               </Link>
             </motion.div>
             <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
@@ -340,10 +340,10 @@ export default function EmpresasPage() {
           <div className="flex gap-4 justify-center flex-wrap">
             <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
               <Link
-                href="/explorar?audiencia=b2b"
+                href="/empresas/registro"
                 className="inline-block bg-white text-rose rounded-full px-10 py-4 text-[13px] font-bold uppercase tracking-[2px] hover:bg-ink hover:text-white transition-all duration-500 shadow-premium"
               >
-                Ver catálogo
+                Crear cuenta gratis
               </Link>
             </motion.div>
             <motion.div whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>

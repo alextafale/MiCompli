@@ -49,7 +49,7 @@ const features = [
     color: 'text-gold'
   },
   {
-    tittle: 'Evidencia en video',
+    title: 'Evidencia en video',
     desc: 'Te entregamos un video editado de la experiencia para que puedas revivirla cuando quieras.',
     icon: Video,
     color: 'text-rose'

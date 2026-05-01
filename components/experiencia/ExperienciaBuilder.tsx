@@ -252,11 +252,11 @@ export default function ExperienciaBuilder({ experiencia }: { experiencia: Exper
 function Section({ label, icon: Icon, children }: { label: string; icon: any; children: React.ReactNode }) {
   return (
     <div className="relative">
-      <p className="text-[11px] tracking-[3px] text-rose uppercase font-bold mb-5 flex items-center gap-2">
+      <div className="text-[11px] tracking-[3px] text-rose uppercase font-bold mb-5 flex items-center gap-2">
         <Icon className="w-4 h-4" />
         {label}
         <div className="h-px flex-1 bg-rose/10" />
-      </p>
+      </div>
       {children}
     </div>
   )
@@ -271,8 +271,8 @@ function Chip({ icon, name, price, selected, onClick }: {
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
       className={`rounded-[20px] p-5 text-center border-[1.5px] transition-all flex flex-col items-center justify-center gap-1 ${selected
-          ? 'border-rose bg-rose-light/50 shadow-sm ring-4 ring-rose/5'
-          : 'border-black/5 bg-white hover:border-rose/30 hover:bg-cream/30'
+        ? 'border-rose bg-rose-light/50 shadow-sm ring-4 ring-rose/5'
+        : 'border-black/5 bg-white hover:border-rose/30 hover:bg-cream/30'
         }`}
     >
       <div className="mb-1">

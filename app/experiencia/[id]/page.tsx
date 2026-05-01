@@ -19,5 +19,5 @@ export default async function ExperienciaPage({ params }: Props) {
 
   if (!experiencia) notFound()
 
-  return <ExperienciaBuilder experiencia={experiencia} />
+  return <ExperienciaBuilder experiencia={experiencia as any} />
 }

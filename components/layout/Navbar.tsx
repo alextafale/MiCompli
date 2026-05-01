@@ -110,13 +110,12 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
-        {/* CTA principal */}
         <motion.div whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}>
           <Link
-            href="/empresas"
-            className="whitespace-nowrap bg-ink text-white text-[10px] md:text-[11px] font-bold uppercase tracking-[1px] md:tracking-[2px] rounded-full px-5 py-2.5 md:px-8 md:py-3 hover:bg-rose transition-all duration-500 shadow-premium active:shadow-sm"
+            href="/empresas/registro"
+            className="whitespace-nowrap bg-rose text-white text-[10px] md:text-[11px] font-bold uppercase tracking-[1px] md:tracking-[2px] rounded-full px-5 py-2.5 md:px-8 md:py-3 hover:bg-ink transition-all duration-500 shadow-premium active:shadow-sm"
           >
-            Para empresas
+            Registro empresa
           </Link>
         </motion.div>
         {/* Mobile menu toggle */}
