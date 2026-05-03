@@ -4,22 +4,32 @@ import Link from 'next/link'
 import { ArrowBack } from '@mui/icons-material'
 import ProductoDetalle from '@/components/experiencias/ProductoDetalle'
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+interface Props {
+  params: Promise<{ id: string }>
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { id } = await params
   const supabase = await createClient()
-  const { data } = await supabase.from('productos').select('nombre, descripcion').eq('id', params.id).single()
+  const { data } = await supabase
+    .from('productos')
+    .select('nombre, descripcion')
+    .eq('id', id)
+    .single()
   return {
     title: data ? `${data.nombre} — MiCompli` : 'Producto — MiCompli',
     description: data?.descripcion,
   }
 }
 
-export default async function ProductoDetallePage({ params }: { params: { id: string } }) {
+export default async function ProductoDetallePage({ params }: Props) {
+  const { id } = await params
   const supabase = await createClient()
 
   const { data: producto } = await supabase
     .from('productos')
     .select('*, categorias(nombre, emoji, slug), profiles!productos_proveedor_id_fkey(id, full_name, email)')
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('activo', true)
     .eq('aprobado', true)
     .single()
@@ -38,7 +48,6 @@ export default async function ProductoDetallePage({ params }: { params: { id: st
           <ArrowBack sx={{ fontSize: 16 }} />
           Volver al catálogo
         </Link>
-
         <ProductoDetalle producto={producto} userId={user?.id ?? null} />
       </div>
     </div>
