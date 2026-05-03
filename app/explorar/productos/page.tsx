@@ -7,11 +7,12 @@ export const metadata = {
   description: 'Explora productos y servicios de nuestros proveedores certificados.',
 }
 
-export default async function ExplorarProductosPage({
-  searchParams,
-}: {
-  searchParams: { categoria?: string; audiencia?: string }
-}) {
+interface Props {
+  searchParams: Promise<{ categoria?: string; audiencia?: string }>
+}
+
+export default async function ExplorarProductosPage({ searchParams }: Props) {
+  const { categoria, audiencia } = await searchParams
   const supabase = await createClient()
 
   // Categorías dinámicas
@@ -29,12 +30,13 @@ export default async function ExplorarProductosPage({
     .eq('aprobado', true)
     .order('created_at', { ascending: false })
 
-  if (searchParams.categoria) {
-    const cat = categorias?.find(c => c.slug === searchParams.categoria)
+  if (categoria) {
+    const cat = categorias?.find(c => c.slug === categoria)
     if (cat) query = query.eq('categoria_id', cat.id)
   }
-  if (searchParams.audiencia && searchParams.audiencia !== 'todos') {
-    query = query.or(`audiencia.eq.${searchParams.audiencia},audiencia.eq.ambos`)
+
+  if (audiencia && audiencia !== 'todos') {
+    query = query.or(`audiencia.eq.${audiencia},audiencia.eq.ambos`)
   }
 
   const { data: productos } = await query
@@ -58,7 +60,7 @@ export default async function ExplorarProductosPage({
         <div className="flex flex-wrap gap-2 justify-center mb-12">
           <Link
             href="/explorar/productos"
-            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${!searchParams.categoria
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${!categoria
                 ? 'bg-ink text-white shadow-premium'
                 : 'bg-white border border-black/8 text-ink/60 hover:text-ink hover:border-rose/20'
               }`}
@@ -69,7 +71,7 @@ export default async function ExplorarProductosPage({
             <Link
               key={cat.id}
               href={`/explorar/productos?categoria=${cat.slug}`}
-              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${searchParams.categoria === cat.slug
+              className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${categoria === cat.slug
                   ? 'bg-ink text-white shadow-premium'
                   : 'bg-white border border-black/8 text-ink/60 hover:text-ink hover:border-rose/20'
                 }`}
@@ -88,8 +90,8 @@ export default async function ExplorarProductosPage({
           ].map(a => (
             <Link
               key={a.val}
-              href={`/explorar/productos?${searchParams.categoria ? `categoria=${searchParams.categoria}&` : ''}audiencia=${a.val}`}
-              className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${(searchParams.audiencia ?? 'todos') === a.val
+              href={`/explorar/productos?${categoria ? `categoria=${categoria}&` : ''}audiencia=${a.val}`}
+              className={`px-4 py-1.5 rounded-full text-xs font-semibold border transition-all ${(audiencia ?? 'todos') === a.val
                   ? 'border-rose bg-rose/5 text-rose'
                   : 'border-black/8 text-ink/40 hover:border-rose/20'
                 }`}
