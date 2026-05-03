@@ -1,7 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import {
@@ -13,17 +13,20 @@ import {
   CardGiftcardOutlined,
   AutoAwesome,
   Business,
+  StorefrontOutlined,
 } from '@mui/icons-material'
 
-type Rol = 'cliente' | 'complice' | 'empresa'
+type Rol = 'cliente' | 'complice' | 'empresa' | 'proveedor'
 
 export default function RegisterPage() {
+  const searchParams = useSearchParams()
+  const initialRol = (searchParams.get('rol') as Rol) || 'cliente'
   const [form, setForm] = useState({
     nombre: '',
     email: '',
     password: '',
     confirmar: '',
-    rol: 'cliente' as Rol,
+    rol: initialRol,
     // Campos empresa
     nombre_empresa: '',
     industria: '',
@@ -33,6 +36,14 @@ export default function RegisterPage() {
   const [focused, setFocused] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
+
+  // Sync rol when URL param changes
+  useEffect(() => {
+    const rol = searchParams.get('rol') as Rol | null
+    if (rol && ['cliente', 'complice', 'empresa', 'proveedor'].includes(rol)) {
+      setForm(f => ({ ...f, rol }))
+    }
+  }, [searchParams])
 
   const handleRegister = async () => {
     if (!form.nombre || !form.email || !form.password) {
@@ -57,18 +68,27 @@ export default function RegisterPage() {
       const { data, error } = await supabase.auth.signUp({
         email: form.email,
         password: form.password,
-        options: { data: { full_name: form.nombre } },
+        options: { 
+          data: { 
+            full_name: form.nombre,
+            role: form.rol 
+          } 
+        },
       })
       if (error) throw error
       if (!data.user) throw new Error('No se pudo crear el usuario')
 
-      // Actualizar rol en profiles
-      if (form.rol !== 'cliente') {
-        await supabase
-          .from('profiles')
-          .update({ role: form.rol })
-          .eq('id', data.user.id)
-      }
+      // Actualizar o crear perfil con el rol correcto
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({ 
+          id: data.user.id,
+          email: form.email,
+          full_name: form.nombre,
+          role: form.rol 
+        })
+      
+      if (profileError) throw profileError
 
       // Si es empresa, crear registro en tabla empresas
       if (form.rol === 'empresa') {
@@ -87,6 +107,8 @@ export default function RegisterPage() {
 
       if (form.rol === 'empresa') {
         router.push('/dashboard/empresa')
+      } else if (form.rol === 'proveedor') {
+        router.push('/proveedor/dashboard')
       } else if (form.rol === 'complice') {
         router.push('/dashboard')
       } else {
@@ -118,6 +140,12 @@ export default function RegisterPage() {
       icon: <AutoAwesome sx={{ fontSize: 22 }} />,
       label: 'Soy Cómplice',
       desc: 'Haz la magia posible',
+    },
+    {
+      val: 'proveedor',
+      icon: <StorefrontOutlined sx={{ fontSize: 22 }} />,
+      label: 'Soy Proveedor',
+      desc: 'Ofrece productos y servicios',
     },
   ]
 
@@ -192,7 +220,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Role selector */}
-          <div className="grid grid-cols-3 gap-2 mb-7 p-1.5 bg-black/5 rounded-2xl">
+          <div className="grid grid-cols-2 gap-2 mb-7 p-1.5 bg-black/5 rounded-2xl">
             {roles.map(r => (
               <button
                 key={r.val}
@@ -314,9 +342,11 @@ export default function RegisterPage() {
               <>
                 {form.rol === 'empresa'
                   ? 'Crear cuenta empresarial'
-                  : form.rol === 'complice'
-                    ? 'Unirme como Cómplice'
-                    : 'Crear mi cuenta'}
+                  : form.rol === 'proveedor'
+                    ? 'Registrarme como Proveedor'
+                    : form.rol === 'complice'
+                      ? 'Unirme como Cómplice'
+                      : 'Crear mi cuenta'}
                 <ArrowForward sx={{ fontSize: 18 }} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}

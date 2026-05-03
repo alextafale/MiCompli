@@ -7,6 +7,18 @@ export type Orden = Database['public']['Tables']['ordenes']['Row']
 export type OrdenComplice = Database['public']['Tables']['orden_complices']['Row']
 export type Servicio = Database['public']['Tables']['servicios']['Row']
 
+// ─── Fase 3.5: Ecosistema de Proveedores ─────────────────
+export type Categoria = Database['public']['Tables']['categorias']['Row']
+export type Producto = Database['public']['Tables']['productos']['Row']
+export type Conversacion = Database['public']['Tables']['conversaciones']['Row']
+export type MensajeConversacion = Database['public']['Tables']['mensajes_conversacion']['Row']
+
+export type ProductoConProveedor = Producto & {
+  proveedor: Pick<Profile, 'id' | 'full_name' | 'avatar_url' | 'email'>
+  categoria: Categoria | null
+}
+
+
 // ─── Enums derivados del schema de Supabase ──────────────
 export type AudienciaTipo = Database['public']['Enums']['audiencia_tipo']
 export type OcasionTipo = Database['public']['Enums']['ocasion_tipo']

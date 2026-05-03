@@ -7,9 +7,11 @@ import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, Close } from '@mui/icons-material'
+import UserMenu from './UserMenu'
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const supabase = createClient()
@@ -17,9 +19,29 @@ export default function Navbar() {
   const closeMenu = () => setIsMobileMenuOpen(false)
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+    supabase.auth.getUser().then(async ({ data }) => {
+      setUser(data.user)
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+        setUserRole(profile?.role ?? null)
+      }
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+        setUserRole(profile?.role ?? null)
+      } else {
+        setUserRole(null)
+      }
     })
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
@@ -29,7 +51,7 @@ export default function Navbar() {
     }
   }, [])
 
-  const navLink = "text-[12px] font-semibold uppercase tracking-[1.5px] text-ink/70 hover:text-rose transition-all duration-300 relative group"
+  const navLink = "text-[11px] font-semibold uppercase tracking-[1px] text-ink/70 hover:text-rose transition-all duration-300 relative group whitespace-nowrap"
   const underline = "absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-rose/40 rounded-full transition-all duration-300 group-hover:w-8"
 
   return (
@@ -63,8 +85,8 @@ export default function Navbar() {
         </motion.div>
       </Link>
 
-      <div className="flex items-center gap-4 md:gap-10">
-        <div className="hidden md:flex items-center gap-10">
+      <div className="flex items-center gap-3 md:gap-6">
+        <div className="hidden md:flex items-center gap-6 lg:gap-8">
           {/* Link Empresas — destacado */}
           <Link href="/empresas" className={navLink}>
             Empresas
@@ -83,11 +105,9 @@ export default function Navbar() {
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
+                className="relative"
               >
-                <Link href="/dashboard" className={navLink}>
-                  Mi portal
-                  <span className={underline} />
-                </Link>
+                <UserMenu user={user} userRole={userRole} supabase={supabase} />
               </motion.div>
             ) : (
               <motion.div
@@ -95,14 +115,18 @@ export default function Navbar() {
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
-                className="flex items-center gap-10"
+                className="flex items-center gap-6 lg:gap-8"
               >
                 <Link href="/login" className={navLink}>
                   Iniciar sesión
                   <span className={underline} />
                 </Link>
-                <Link href="/register" className={navLink}>
+                <Link href="/register?rol=complice" className={navLink}>
                   Soy Cómplice
+                  <span className={underline} />
+                </Link>
+                <Link href="/register?rol=proveedor" className={navLink}>
+                  Soy Proveedor
                   <span className={underline} />
                 </Link>
               </motion.div>
@@ -110,10 +134,10 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
-        <motion.div whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }}>
+        <motion.div whileHover={{ scale: 1.02, y: -1 }} whileTap={{ scale: 0.98 }} className="hidden md:block">
           <Link
             href="/empresas/registro"
-            className="whitespace-nowrap bg-rose text-white text-[10px] md:text-[11px] font-bold uppercase tracking-[1px] md:tracking-[2px] rounded-full px-5 py-2.5 md:px-8 md:py-3 hover:bg-ink transition-all duration-500 shadow-premium active:shadow-sm"
+            className="whitespace-nowrap bg-rose text-white text-[10px] font-bold uppercase tracking-[1px] rounded-full px-5 py-2.5 lg:px-7 lg:py-3 hover:bg-ink transition-all duration-500 shadow-premium active:shadow-sm"
           >
             Registro empresa
           </Link>
@@ -152,7 +176,11 @@ export default function Navbar() {
           </Link>
           
           {user ? (
-            <Link href="/dashboard" onClick={closeMenu} className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors">
+            <Link
+              href={userRole === 'proveedor' ? '/proveedor/dashboard' : '/dashboard'}
+              onClick={closeMenu}
+              className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors"
+            >
               Mi portal
             </Link>
           ) : (
@@ -160,8 +188,11 @@ export default function Navbar() {
               <Link href="/login" onClick={closeMenu} className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors">
                 Iniciar sesión
               </Link>
-              <Link href="/register" onClick={closeMenu} className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors">
+              <Link href="/register?rol=complice" onClick={closeMenu} className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors">
                 Soy Cómplice
+              </Link>
+              <Link href="/register?rol=proveedor" onClick={closeMenu} className="text-xl font-display font-bold uppercase tracking-[2px] text-ink hover:text-rose transition-colors">
+                Soy Proveedor
               </Link>
             </>
           )}

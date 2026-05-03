@@ -360,6 +360,195 @@ export type Database = {
           },
         ]
       }
+      categorias: {
+        Row: {
+          id: string
+          nombre: string
+          slug: string
+          descripcion: string | null
+          emoji: string | null
+          imagen_url: string | null
+          activa: boolean | null
+          orden: number | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          nombre: string
+          slug: string
+          descripcion?: string | null
+          emoji?: string | null
+          imagen_url?: string | null
+          activa?: boolean | null
+          orden?: number | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          nombre?: string
+          slug?: string
+          descripcion?: string | null
+          emoji?: string | null
+          imagen_url?: string | null
+          activa?: boolean | null
+          orden?: number | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      productos: {
+        Row: {
+          id: string
+          proveedor_id: string | null
+          categoria_id: string | null
+          nombre: string
+          descripcion: string
+          precio: number
+          precio_mayoreo: number | null
+          imagenes: string[] | null
+          emoji: string | null
+          audiencia: Database["public"]["Enums"]["audiencia_tipo"]
+          ocasiones: Database["public"]["Enums"]["ocasion_tipo"][] | null
+          activo: boolean | null
+          aprobado: boolean | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          proveedor_id?: string | null
+          categoria_id?: string | null
+          nombre: string
+          descripcion: string
+          precio: number
+          precio_mayoreo?: number | null
+          imagenes?: string[] | null
+          emoji?: string | null
+          audiencia?: Database["public"]["Enums"]["audiencia_tipo"]
+          ocasiones?: Database["public"]["Enums"]["ocasion_tipo"][] | null
+          activo?: boolean | null
+          aprobado?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          proveedor_id?: string | null
+          categoria_id?: string | null
+          nombre?: string
+          descripcion?: string
+          precio?: number
+          precio_mayoreo?: number | null
+          imagenes?: string[] | null
+          emoji?: string | null
+          audiencia?: Database["public"]["Enums"]["audiencia_tipo"]
+          ocasiones?: Database["public"]["Enums"]["ocasion_tipo"][] | null
+          activo?: boolean | null
+          aprobado?: boolean | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "productos_proveedor_id_fkey"
+            columns: ["proveedor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "productos_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mensajes: {
+        Row: {
+          id: string
+          orden_id: string | null
+          emisor_id: string | null
+          contenido: string
+          leido: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          orden_id?: string | null
+          emisor_id?: string | null
+          contenido: string
+          leido?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          orden_id?: string | null
+          emisor_id?: string | null
+          contenido?: string
+          leido?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
+      conversaciones: {
+        Row: {
+          id: string
+          comprador_id: string | null
+          proveedor_id: string | null
+          producto_id: string | null
+          ultimo_mensaje: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          comprador_id?: string | null
+          proveedor_id?: string | null
+          producto_id?: string | null
+          ultimo_mensaje?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          comprador_id?: string | null
+          proveedor_id?: string | null
+          producto_id?: string | null
+          ultimo_mensaje?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      mensajes_conversacion: {
+        Row: {
+          id: string
+          conversacion_id: string | null
+          emisor_id: string | null
+          contenido: string
+          leido: boolean | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          conversacion_id?: string | null
+          emisor_id?: string | null
+          contenido: string
+          leido?: boolean | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          conversacion_id?: string | null
+          emisor_id?: string | null
+          contenido?: string
+          leido?: boolean | null
+          created_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -385,7 +574,7 @@ export type Database = {
       | "en_proceso"
       | "completada"
       | "cancelada"
-      user_role: "cliente" | "complice" | "admin"
+      user_role: "cliente" | "complice" | "admin" | "proveedor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -512,7 +701,17 @@ export const Constants = {
   public: {
     Enums: {
       addon_tipo: ["ubicacion", "musica", "extra"],
+      audiencia_tipo: ["b2b", "b2c", "ambos"],
       categoria_tipo: ["regalo", "experiencia"],
+      ocasion_tipo: [
+        "cumpleanos",
+        "aniversario_laboral",
+        "onboarding",
+        "reconocimiento",
+        "regalo_cliente",
+        "dia_especial",
+        "sin_ocasion",
+      ],
       orden_estado: [
         "pendiente",
         "confirmada",
@@ -520,7 +719,8 @@ export const Constants = {
         "completada",
         "cancelada",
       ],
-      user_role: ["cliente", "complice", "admin"],
+      user_role: ["cliente", "complice", "admin", "proveedor"],
     },
   },
 } as const
+

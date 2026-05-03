@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { Celebration, AutoAwesome } from '@mui/icons-material'
 
 export default function CheckoutForm() {
   const router = useRouter()
@@ -40,11 +39,16 @@ export default function CheckoutForm() {
           total: cart.total,
           addons_seleccionados: cart.addons,
         } as any)
-        .select('numero')
-        .single() as { data: { numero: string } | null, error: any }
+        .select('numero, id')
+        .single() as { data: { numero: string; id: string } | null, error: any }
+
       if (error) throw error
       sessionStorage.removeItem('mc_cart')
-      router.push(`/success?numero=${data?.numero ?? ''}&total=${cart.total}`)
+
+      // ← Pasamos también el id de la orden para el flujo de reseña
+      router.push(
+        `/success?numero=${data?.numero ?? ''}&total=${cart.total}&orden_id=${data?.id ?? ''}`
+      )
     } catch (e: any) {
       toast.error('Error al confirmar: ' + e.message)
     } finally {
@@ -56,8 +60,8 @@ export default function CheckoutForm() {
 
   return (
     <div className="pt-[80px] max-w-lg mx-auto px-4 py-8">
-      <h1 className="font-serif text-3xl mb-2 flex items-center gap-2">Último paso <Celebration className="text-rose" /></h1>
-      <p className="text-ink-mid mb-8">Solo unos datos para coordinar a tus cómplices</p>
+      <h1 className="font-serif text-3xl mb-2">Último paso 🎉</h1>
+      <p className="text-ink/50 mb-8">Solo unos datos para coordinar a tus cómplices</p>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
         <Field label="Tu nombre *" placeholder="Ana García" value={form.nombre} onChange={v => setForm(f => ({ ...f, nombre: v }))} />
@@ -66,8 +70,8 @@ export default function CheckoutForm() {
       <Field label="Email *" placeholder="ana@ejemplo.com" value={form.email} onChange={v => setForm(f => ({ ...f, email: v }))} type="email" />
       <Field label="Fecha deseada *" value={form.fecha} onChange={v => setForm(f => ({ ...f, fecha: v }))} type="date" />
 
-      <div className="bg-rose-light rounded-2xl p-4 my-6 text-sm text-rose-dark leading-relaxed">
-        <AutoAwesome className="inline w-4 h-4 text-rose/60" /> Una vez confirmado, tu equipo de cómplices recibirá la orden y se coordinarán para que todo salga perfecto.
+      <div className="bg-rose/5 rounded-2xl p-4 my-6 text-sm text-rose leading-relaxed border border-rose/10">
+        ✨ Una vez confirmado, tu equipo de cómplices recibirá la orden y se coordinarán para que todo salga perfecto.
       </div>
 
       {/* Resumen */}
@@ -87,7 +91,7 @@ export default function CheckoutForm() {
 
       <button
         onClick={handleSubmit} disabled={loading}
-        className="w-full bg-rose text-white rounded-full py-4 font-medium hover:bg-rose-dark transition-colors disabled:opacity-60 text-base"
+        className="w-full bg-rose text-white rounded-full py-4 font-medium hover:bg-ink transition-colors disabled:opacity-60 text-base"
       >
         {loading ? 'Confirmando...' : 'Confirmar y pagar →'}
       </button>
@@ -100,7 +104,7 @@ function Field({ label, placeholder = '', value, onChange, type = 'text' }: {
 }) {
   return (
     <div className="mb-4">
-      <label className="block text-xs text-ink-mid mb-1.5">{label}</label>
+      <label className="block text-xs text-ink/50 mb-1.5">{label}</label>
       <input
         type={type} placeholder={placeholder} value={value}
         onChange={e => onChange(e.target.value)}
@@ -112,7 +116,7 @@ function Field({ label, placeholder = '', value, onChange, type = 'text' }: {
 
 function Line({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between text-sm text-ink-mid">
+    <div className="flex justify-between text-sm text-ink/50">
       <span>{label}</span><span>{value}</span>
     </div>
   )

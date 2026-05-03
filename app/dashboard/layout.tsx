@@ -21,8 +21,18 @@ export default async function DashboardLayout({
 
   const profile = data as Tables<'profiles'> | null
 
+  // ── Redireccionamiento por rol ───────────────────────────
+  // Clientes no tienen dashboard
   if (profile?.role === 'cliente') redirect('/')
+
+  // Empresas tienen su propio dashboard sin sidebar de proveedor
   if (profile?.role === 'empresa') redirect('/dashboard/empresa')
+
+  // Admins y cómplices (proveedores) usan este layout
+  // Si no tiene rol reconocido, mandar al home
+  if (!profile?.role || !['complice', 'admin'].includes(profile.role)) {
+    redirect('/')
+  }
 
   return (
     <div className="flex min-h-screen pt-[60px]">

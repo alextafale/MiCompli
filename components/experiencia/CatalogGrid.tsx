@@ -30,10 +30,19 @@ const CATEGORIA_TABS = [
 
 interface Props {
   experiencias: ExperienciaConAddons[]
+  productos?: any[]        // productos de proveedores
+  categorias?: any[]       // categorías dinámicas
   audienciaInicial?: Audiencia
+  categoriaInicial?: string
 }
 
-export default function CatalogGrid({ experiencias, audienciaInicial = 'todos' }: Props) {
+export default function CatalogGrid({
+  experiencias,
+  productos = [],
+  categorias = [],
+  audienciaInicial = 'todos',
+  categoriaInicial = '',
+}: Props) {
   const [tab, setTab] = useState('todos')
   const [audiencia, setAudiencia] = useState<Audiencia>(audienciaInicial)
   const [ocasion, setOcasion] = useState<Ocasion>('todas')
@@ -98,8 +107,8 @@ export default function CatalogGrid({ experiencias, audienciaInicial = 'todos' }
             key={a.value}
             onClick={() => { setAudiencia(a.value as Audiencia); setOcasion('todas') }}
             className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all ${audiencia === a.value
-                ? 'text-white'
-                : 'text-ink/60 hover:text-rose border border-black/5 hover:border-rose/30'
+              ? 'text-white'
+              : 'text-ink/60 hover:text-rose border border-black/5 hover:border-rose/30'
               }`}
           >
             {audiencia === a.value && (
@@ -122,8 +131,8 @@ export default function CatalogGrid({ experiencias, audienciaInicial = 'todos' }
             key={t.value}
             onClick={() => setTab(t.value)}
             className={`relative flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all ${tab === t.value
-                ? 'text-white'
-                : 'text-ink/50 hover:text-rose border border-black/5 hover:border-rose/30'
+              ? 'text-white'
+              : 'text-ink/50 hover:text-rose border border-black/5 hover:border-rose/30'
               }`}
           >
             {tab === t.value && (
@@ -151,8 +160,8 @@ export default function CatalogGrid({ experiencias, audienciaInicial = 'todos' }
             <button
               onClick={() => setOcasion('todas')}
               className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[1px] transition-all ${ocasion === 'todas'
-                  ? 'bg-rose text-white'
-                  : 'bg-white text-ink/50 border border-black/[0.06] hover:border-rose/30'
+                ? 'bg-rose text-white'
+                : 'bg-white text-ink/50 border border-black/[0.06] hover:border-rose/30'
                 }`}
             >
               Todas
@@ -162,8 +171,8 @@ export default function CatalogGrid({ experiencias, audienciaInicial = 'todos' }
                 key={oc}
                 onClick={() => setOcasion(oc as Ocasion)}
                 className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[1px] transition-all ${ocasion === oc
-                    ? 'bg-rose text-white'
-                    : 'bg-white text-ink/50 border border-black/[0.06] hover:border-rose/30'
+                  ? 'bg-rose text-white'
+                  : 'bg-white text-ink/50 border border-black/[0.06] hover:border-rose/30'
                   }`}
               >
                 {OCASION_LABELS[oc] ?? oc}

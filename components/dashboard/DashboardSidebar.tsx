@@ -4,20 +4,18 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react'
 import type { Profile } from '@/types'
-
 import {
-  BarChart,
-  Inventory2,
-  Storefront,
-  Payments,
-  Settings
+  BarChart, Inventory2, Storefront,
+  Payments, Settings, Chat, Store,
 } from '@mui/icons-material'
 
-const NAV = [
+const NAV_COMPLICE = [
   { href: '/dashboard', icon: BarChart, label: 'Dashboard' },
+  { href: '/dashboard/productos', icon: Store, label: 'Mis productos' },
   { href: '/dashboard/ordenes', icon: Inventory2, label: 'Mis órdenes' },
-  { href: '/dashboard/servicios', icon: Storefront, label: 'Mis servicios' },
+  { href: '/dashboard/mensajes', icon: Chat, label: 'Mensajes' },
   { href: '/dashboard/ganancias', icon: Payments, label: 'Ganancias' },
   { href: '/dashboard/perfil', icon: Settings, label: 'Perfil' },
 ]
@@ -26,6 +24,21 @@ export default function DashboardSidebar({ profile }: { profile: Profile | null 
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+  const [mensajesNoLeidos, setMensajesNoLeidos] = useState(0)
+
+  useEffect(() => {
+    async function cargarNoLeidos() {
+      if (!profile?.id) return
+      const db = supabase as any
+      const { count } = await db
+        .from('mensajes_conversacion')
+        .select('*', { count: 'exact', head: true })
+        .eq('leido', false)
+        .neq('emisor_id', profile.id)
+      setMensajesNoLeidos(count ?? 0)
+    }
+    cargarNoLeidos()
+  }, [profile])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -35,11 +48,12 @@ export default function DashboardSidebar({ profile }: { profile: Profile | null 
 
   return (
     <aside className="w-[260px] min-h-full bg-white border-r border-black/5 flex-shrink-0 flex flex-col shadow-sm">
+      {/* Logo */}
       <div className="px-8 py-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
           className="relative h-24 w-80 mb-4"
         >
           <Image
@@ -50,12 +64,14 @@ export default function DashboardSidebar({ profile }: { profile: Profile | null 
             priority
           />
         </motion.div>
-        <p className="text-[10px] uppercase tracking-[3px] font-bold text-ink/10">Portal Cómplice</p>
+        <p className="text-[10px] uppercase tracking-[3px] font-bold text-ink/10">Portal Proveedor</p>
       </div>
 
+      {/* Nav */}
       <nav className="flex-1 px-4 py-4 space-y-1">
-        {NAV.map(item => {
+        {NAV_COMPLICE.map(item => {
           const isActive = pathname === item.href
+          const esMensajes = item.href === '/dashboard/mensajes'
           return (
             <Link
               key={item.href}
@@ -66,20 +82,28 @@ export default function DashboardSidebar({ profile }: { profile: Profile | null 
                 }`}
             >
               <item.icon className={`w-5 h-5 transition-colors ${isActive ? 'text-rose' : 'text-ink/40'}`} />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {esMensajes && mensajesNoLeidos > 0 && (
+                <span className="bg-rose text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center">
+                  {mensajesNoLeidos > 9 ? '9+' : mensajesNoLeidos}
+                </span>
+              )}
             </Link>
           )
         })}
       </nav>
 
+      {/* Footer */}
       <div className="px-8 py-8 border-t border-black/5">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 rounded-full bg-rose-light flex items-center justify-center text-rose font-bold text-xs">
-            {profile?.full_name?.charAt(0) ?? 'C'}
+          <div className="w-8 h-8 rounded-full bg-rose/10 flex items-center justify-center text-rose font-bold text-xs">
+            {profile?.full_name?.charAt(0) ?? 'P'}
           </div>
           <div className="flex flex-col">
-            <p className="text-[13px] font-bold text-ink truncate leading-none mb-1">{profile?.full_name ?? 'Cómplice'}</p>
-            <p className="text-[10px] text-ink/40 font-medium">Plan Pro</p>
+            <p className="text-[13px] font-bold text-ink truncate leading-none mb-1">
+              {profile?.full_name ?? 'Proveedor'}
+            </p>
+            <p className="text-[10px] text-ink/40 font-medium">Proveedor activo</p>
           </div>
         </div>
         <button

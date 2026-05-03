@@ -69,16 +69,17 @@ export default function Hero() {
           variants={itemVariants}
           className="font-display text-[clamp(48px,8vw,88px)] font-bold leading-[1.05] tracking-[-0.04em] mb-8 text-ink"
         >
-          Regala momentos,{' '}
+          ¿A quién vamos a{' '}
           <span className="text-rose relative inline-block">
-            no cosas
+            sorprender
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{ delay: 1.5, duration: 1, ease: 'circOut' }}
               className="absolute -bottom-2 left-0 h-[4px] bg-rose/20 rounded-full"
             />
-          </span>
+          </span>{' '}
+          hoy?
         </motion.h1>
 
         {/* Subheadline */}
