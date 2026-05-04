@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { ExperienciaConAddons } from '@/types'
@@ -60,7 +60,7 @@ interface Props {
   categoriaInicial?: string
 }
 
-export default function CatalogGrid({
+function CatalogGridContent({
   experiencias,
   productos = [],
   categorias = [],
@@ -426,5 +426,13 @@ export default function CatalogGrid({
         onClose={() => setIsModalOpen(false)} 
       />
     </div>
+  )
+}
+
+export default function CatalogGrid(props: Props) {
+  return (
+    <Suspense fallback={<div className="min-h-screen animate-pulse bg-cream/10" />}>
+      <CatalogGridContent {...props} />
+    </Suspense>
   )
 }

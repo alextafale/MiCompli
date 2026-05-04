@@ -215,3 +215,11 @@ function NavbarContent() {
     </>
   )
 }
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-[72px] md:h-[80px]" />}>
+      <NavbarContent />
+    </Suspense>
+  )
+}
