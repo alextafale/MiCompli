@@ -3,14 +3,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, Close } from '@mui/icons-material'
 import UserMenu from './UserMenu'
 import { usePathname, useSearchParams } from 'next/navigation'
 
-export default function Navbar() {
+function NavbarContent() {
   const [user, setUser] = useState<User | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
   const [isScrolled, setIsScrolled] = useState(false)
