@@ -40,7 +40,7 @@ export default function Hero() {
         className="relative z-10 max-w-4xl flex flex-col items-center"
       >
         {/* Logo */}
-        <motion.div variants={itemVariants} className="relative h-16 w-56 md:h-24 md:w-80 mb-8">
+        <motion.div variants={itemVariants} className="relative h-20 w-64 md:h-48 md:w-[600px] mb-12">
           <Image
             src="/images/micompliLOGO.jpeg"
             alt="MiCompli Logo"
