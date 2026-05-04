@@ -32,7 +32,7 @@ const categories = [
     icon: CardGiftcard,
     tag: 'B2C',
     name: 'Para Ti',
-    desc: 'Convierte un simple gesto en una experiencia inolvidable. Regalos y sorpresas orquestadas por expertos.',
+    desc: 'Regalos de saldo digital, mesas de regalo, regalos corporativos, experiencias sorpresa, fondos para sueños y gift cards emocionales.',
     cta: 'Explorar catálogo',
     gradient: 'from-rose/20 to-rose/5',
     accent: 'text-rose',

@@ -1,12 +1,31 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { ExperienciaConAddons } from '@/types'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CardGiftcard, AutoAwesome, InfoOutlined, Business, Person } from '@mui/icons-material'
+import {
+  CardGiftcard,
+  AutoAwesome,
+  InfoOutlined,
+  Business,
+  Person,
+  AccountBalanceWallet,
+  BusinessCenter,
+  Stars,
+  Redeem,
+  VolunteerActivism,
+  AllInclusive,
+  CreditCard,
+  AutoMode,
+  PaymentsOutlined,
+  AutoFixHighOutlined,
+  SendOutlined,
+  CardGiftcardOutlined
+} from '@mui/icons-material'
 import IconMapper from '@/components/common/IconMapper'
 import { getExperienceImage } from '@/lib/utils/image-fallbacks'
+import TarjetaDigitalModal from './TarjetaDigitalModal'
 
 // ─── Tipos ────────────────────────────────────────────────
 type Audiencia = 'todos' | 'b2b' | 'b2c'
@@ -23,9 +42,14 @@ const OCASION_LABELS: Record<string, string> = {
 }
 
 const CATEGORIA_TABS = [
-  { label: 'Todos', value: 'todos', icon: InfoOutlined },
-  { label: 'Regalos', value: 'regalo', icon: CardGiftcard },
-  { label: 'Experiencias', value: 'experiencia', icon: AutoAwesome },
+  { label: 'Todos', value: 'todos', icon: AllInclusive },
+  { label: 'Tarjeta Digital', value: 'tarjeta_digital', icon: CreditCard },
+  { label: 'Saldo Digital', value: 'saldo_digital', icon: AccountBalanceWallet },
+  { label: 'Mesa de Regalos', value: 'mesas_regalo', icon: VolunteerActivism },
+  { label: 'Corporativos', value: 'corporativos', icon: BusinessCenter },
+  { label: 'Experiencia Sorpresa', value: 'sorpresas', icon: AutoAwesome },
+  { label: 'Fondos para Sueños', value: 'suenos', icon: Stars },
+  { label: 'Gift Cards', value: 'gift_cards', icon: Redeem },
 ]
 
 interface Props {
@@ -43,9 +67,15 @@ export default function CatalogGrid({
   audienciaInicial = 'todos',
   categoriaInicial = '',
 }: Props) {
-  const [tab, setTab] = useState('todos')
+  const [tab, setTab] = useState(categoriaInicial || 'todos')
   const [audiencia, setAudiencia] = useState<Audiencia>(audienciaInicial)
   const [ocasion, setOcasion] = useState<Ocasion>('todas')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  // Sincronizar tab con prop inicial si cambia (ej. navegando desde navbar)
+  useEffect(() => {
+    setTab(categoriaInicial || 'todos')
+  }, [categoriaInicial])
 
   // Ocasiones disponibles según audiencia
   const ocasionesDisponibles = useMemo(() => {
@@ -61,7 +91,7 @@ export default function CatalogGrid({
 
   // Filtrado final
   const filtered = useMemo(() => {
-    return experiencias.filter(e => {
+    let baseItems = experiencias.filter(e => {
       const matchTab = tab === 'todos' || e.categoria === tab
       const matchAudiencia =
         audiencia === 'todos' ||
@@ -70,6 +100,26 @@ export default function CatalogGrid({
       const matchOcasion = ocasion === 'todas' || e.ocasion === ocasion
       return matchTab && matchAudiencia && matchOcasion
     })
+
+    // Si no hay productos en las nuevas categorías, agregar placeholders para demo
+    if (baseItems.length === 0 && tab !== 'todos' && tab !== 'regalo' && tab !== 'experiencia') {
+      const placeholders: any[] = [
+        {
+          id: `placeholder-${tab}`,
+          nombre: CATEGORIA_TABS.find(t => t.value === tab)?.label || 'Servicio',
+          descripcion: `Próximamente: ${CATEGORIA_TABS.find(t => t.value === tab)?.label}. Estamos preparando las mejores opciones para ti.`,
+          precio_base: 0,
+          categoria: tab,
+          audiencia: 'ambos',
+          activo: true,
+          emoji: '✨',
+          created_at: new Date().toISOString()
+        }
+      ]
+      return placeholders
+    }
+
+    return baseItems
   }, [experiencias, tab, audiencia, ocasion])
 
   const isB2B = audiencia === 'b2b'
@@ -78,79 +128,85 @@ export default function CatalogGrid({
     <div className="pt-[72px] min-h-screen bg-cream/30">
 
       {/* ── Header ──────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`border-b px-4 py-16 text-center shadow-sm ${isB2B ? 'bg-ink border-white/5' : 'bg-white border-rose/10'}`}
-      >
-        <p className={`text-[11px] tracking-[4px] uppercase font-semibold mb-3 ${isB2B ? 'text-rose' : 'text-rose'}`}>
-          {isB2B ? 'Catálogo Empresarial' : 'Descubre'}
-        </p>
-        <h1 className={`font-serif text-[clamp(32px,5vw,48px)] mb-3 ${isB2B ? 'text-white' : 'text-ink'}`}>
-          {isB2B ? 'Regalos para tu equipo' : 'Nuestras experiencias'}
-        </h1>
-        <p className={`text-lg font-light ${isB2B ? 'text-white/50' : 'text-ink/50'}`}>
-          {isB2B
-            ? 'Gifting corporativo con alma latinoamericana'
-            : 'Cada momento merece ser extraordinario'}
-        </p>
-      </motion.div>
+      {tab !== 'tarjeta_digital' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className={`border-b px-4 py-16 text-center shadow-sm ${isB2B ? 'bg-ink border-white/5' : 'bg-white border-rose/10'}`}
+        >
+          <p className={`text-[11px] tracking-[4px] uppercase font-semibold mb-3 ${isB2B ? 'text-rose' : 'text-rose'}`}>
+            {isB2B ? 'Catálogo Empresarial' : 'Descubre'}
+          </p>
+          <h1 className={`font-serif text-[clamp(32px,5vw,48px)] mb-3 ${isB2B ? 'text-white' : 'text-ink'}`}>
+            {isB2B ? 'Regalos para tu equipo' : 'Nuestras experiencias'}
+          </h1>
+          <p className={`text-lg font-light ${isB2B ? 'text-white/50' : 'text-ink/50'}`}>
+            {isB2B
+              ? 'Gifting corporativo con alma latinoamericana'
+              : 'Cada momento merece ser extraordinario'}
+          </p>
+        </motion.div>
+      )}
 
       {/* ── Filtros de audiencia ─────────────────────────── */}
-      <div className="flex flex-wrap gap-3 justify-center py-5 px-4 bg-white/80 backdrop-blur-md border-b border-rose/10 sticky top-[72px] z-20">
-        {[
-          { value: 'todos', label: 'Todo', icon: InfoOutlined },
-          { value: 'b2b', label: 'Empresas', icon: Business },
-          { value: 'b2c', label: 'Personal', icon: Person },
-        ].map(a => (
-          <button
-            key={a.value}
-            onClick={() => { setAudiencia(a.value as Audiencia); setOcasion('todas') }}
-            className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all ${audiencia === a.value
-              ? 'text-white'
-              : 'text-ink/60 hover:text-rose border border-black/5 hover:border-rose/30'
-              }`}
-          >
-            {audiencia === a.value && (
-              <motion.div
-                layoutId="activeAudiencia"
-                className="absolute inset-0 bg-ink rounded-full"
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-              />
-            )}
-            <a.icon className={`relative z-10 w-4 h-4 ${audiencia === a.value ? 'text-rose' : 'text-rose'}`} />
-            <span className="relative z-10">{a.label}</span>
-          </button>
-        ))}
-      </div>
+      {tab !== 'tarjeta_digital' && (
+        <div className="flex flex-wrap gap-3 justify-center py-5 px-4 bg-white/80 backdrop-blur-md border-b border-rose/10 sticky top-[72px] z-20">
+          {[
+            { value: 'todos', label: 'Todo', icon: InfoOutlined },
+            { value: 'b2b', label: 'Empresas', icon: Business },
+            { value: 'b2c', label: 'Personal', icon: Person },
+          ].map(a => (
+            <button
+              key={a.value}
+              onClick={() => { setAudiencia(a.value as Audiencia); setOcasion('todas') }}
+              className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium transition-all ${audiencia === a.value
+                ? 'text-white'
+                : 'text-ink/60 hover:text-rose border border-black/5 hover:border-rose/30'
+                }`}
+            >
+              {audiencia === a.value && (
+                <motion.div
+                  layoutId="activeAudiencia"
+                  className="absolute inset-0 bg-ink rounded-full"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <a.icon className={`relative z-10 w-4 h-4 ${audiencia === a.value ? 'text-rose' : 'text-rose'}`} />
+              <span className="relative z-10">{a.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* ── Filtros de categoría ─────────────────────────── */}
-      <div className="flex flex-wrap gap-3 justify-center py-4 px-4 bg-white/60 backdrop-blur-md border-b border-rose/5 sticky top-[136px] z-10">
-        {CATEGORIA_TABS.map(t => (
-          <button
-            key={t.value}
-            onClick={() => setTab(t.value)}
-            className={`relative flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all ${tab === t.value
-              ? 'text-white'
-              : 'text-ink/50 hover:text-rose border border-black/5 hover:border-rose/30'
-              }`}
-          >
-            {tab === t.value && (
-              <motion.div
-                layoutId="activeTab"
-                className="absolute inset-0 bg-rose rounded-full"
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-              />
-            )}
-            <t.icon className="relative z-10 w-4 h-4" />
-            <span className="relative z-10">{t.label}</span>
-          </button>
-        ))}
-      </div>
+      {tab !== 'tarjeta_digital' && (
+        <div className="flex flex-wrap gap-3 justify-center py-4 px-4 bg-white/60 backdrop-blur-md border-b border-rose/5 sticky top-[136px] z-10">
+          {CATEGORIA_TABS.map(t => (
+            <button
+              key={t.value}
+              onClick={() => setTab(t.value)}
+              className={`relative flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all ${tab === t.value
+                ? 'text-white'
+                : 'text-ink/50 hover:text-rose border border-black/5 hover:border-rose/30'
+                }`}
+            >
+              {tab === t.value && (
+                <motion.div
+                  layoutId="activeTab"
+                  className="absolute inset-0 bg-rose rounded-full"
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <t.icon className="relative z-10 w-4 h-4" />
+              <span className="relative z-10">{t.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* ── Filtros de ocasión (solo si hay ocasiones) ────── */}
       <AnimatePresence>
-        {ocasionesDisponibles.length > 0 && (
+        {tab !== 'tarjeta_digital' && ocasionesDisponibles.length > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
@@ -188,7 +244,98 @@ export default function CatalogGrid({
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-10 max-w-7xl mx-auto"
       >
         <AnimatePresence mode="popLayout">
-          {filtered.length === 0 ? (
+          {tab === 'tarjeta_digital' ? (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              className="col-span-full"
+            >
+              <div className="bg-white rounded-[64px] overflow-hidden border border-rose/10 shadow-premium flex flex-col lg:flex-row">
+                
+                {/* Visual Side */}
+                <div className="relative lg:w-2/5 h-80 lg:h-auto bg-black">
+                  <Image 
+                    src="/images/tarjeta_digital_hero.png" 
+                    alt="Tarjeta Digital Premium" 
+                    fill 
+                    className="object-cover opacity-90"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                  <div className="absolute bottom-10 left-10 right-10">
+                    <motion.div 
+                      animate={{ y: [0, -10, 0] }}
+                      transition={{ duration: 4, repeat: Infinity }}
+                      className="glass p-6 rounded-3xl border border-white/20"
+                    >
+                      <h4 className="text-white font-display font-bold text-lg mb-1">Impacto Instantáneo</h4>
+                      <p className="text-white/60 text-xs uppercase tracking-widest font-black">98% de felicidad garantizada</p>
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Content Side */}
+                <div className="flex-1 p-12 md:p-20 lg:p-24 bg-cream/20">
+                  <div className="mb-16">
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose/10 text-rose text-[10px] font-black uppercase tracking-[3px] mb-8 border border-rose/10">
+                      Innovación en Regalos
+                    </span>
+                    <h2 className="font-serif text-[clamp(40px,5vw,64px)] leading-[0.9] text-ink mb-8">
+                      ¿Cómo funciona la <br />
+                      <span className="text-rose italic font-light underline decoration-rose/10 underline-offset-8">Tarjeta Digital?</span>
+                    </h2>
+                    <p className="text-ink/50 text-xl max-w-2xl leading-relaxed font-light">
+                      La forma más rápida, personal y elegante de estar presente. <br />
+                      <span className="text-ink font-medium">Sorprende a quien quieras, donde quiera que esté.</span>
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-20">
+                    {[
+                      { icon: PaymentsOutlined, step: '01', title: 'Monto Flexible', desc: 'Tú decides el valor del regalo según la ocasión.' },
+                      { icon: AutoFixHighOutlined, step: '02', title: 'Personalización', desc: 'Añade tu toque personal con mensajes y diseños.' },
+                      { icon: SendOutlined, step: '03', title: 'Envío Inmediato', desc: 'Llega por WhatsApp o Email en segundos.' },
+                      { icon: CardGiftcardOutlined, step: '04', title: 'Elección Libre', desc: 'El destinatario elige su experiencia ideal.' },
+                    ].map((s, idx) => (
+                      <div key={idx} className="flex gap-6 group">
+                        <div className="w-14 h-14 shrink-0 bg-white rounded-2xl flex items-center justify-center text-rose shadow-sm group-hover:bg-rose group-hover:text-white transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3">
+                          <s.icon />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[10px] font-black text-rose/30 uppercase tracking-[2px]">{s.step}</span>
+                            <h3 className="font-display text-lg font-bold text-ink">{s.title}</h3>
+                          </div>
+                          <p className="text-ink/40 text-sm leading-relaxed">{s.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-8 pt-12 border-t border-black/5">
+                    <button className="bg-ink text-white rounded-full px-12 py-5 text-[14px] font-black uppercase tracking-[3px] hover:bg-rose transition-all duration-500 shadow-premium active:scale-95 group">
+                      Regalar Ahora
+                      <span className="inline-block ml-3 group-hover:translate-x-2 transition-transform">→</span>
+                    </button>
+                    <div className="flex flex-col sm:flex-row items-center gap-8">
+                      <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className="text-rose text-sm font-bold uppercase tracking-[2px] hover:underline underline-offset-8 decoration-2 transition-all"
+                      >
+                        Guía Interactiva
+                      </button>
+                      <button 
+                        onClick={() => setTab('todos')}
+                        className="text-ink/40 text-[11px] font-black uppercase tracking-[2px] hover:text-ink transition-colors border-l border-black/10 pl-8 hidden sm:block"
+                      >
+                        Catálogo Completo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : filtered.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -273,6 +420,11 @@ export default function CatalogGrid({
           )}
         </AnimatePresence>
       </motion.div>
+      {/* ── Modal Explicativo ─────────────────────────── */}
+      <TarjetaDigitalModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   )
 }

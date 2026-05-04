@@ -144,12 +144,6 @@ export default function RegisterClient() {
             label: 'Soy Cómplice',
             desc: 'Haz la magia posible',
         },
-        {
-            val: 'proveedor',
-            icon: <StorefrontOutlined sx={{ fontSize: 22 }} />,
-            label: 'Soy Proveedor',
-            desc: 'Ofrece productos y servicios',
-        },
     ]
 
     const industriaOpts = [

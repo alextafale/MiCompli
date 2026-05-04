@@ -66,6 +66,16 @@ const pasos = [
     title: 'El destinatario elige',
     desc: 'Reciben un link con una experiencia digital de regalo. Ellos escogen lo que más les gusta.',
   },
+  {
+    number: '04',
+    title: 'El cómplice brinda el servicio',
+    desc: 'Nuestra red de expertos se encarga de ejecutar la sorpresa con perfección y profesionalismo.',
+  },
+  {
+    number: '05',
+    title: 'Se comparten evidencias',
+    desc: 'Recibe fotos y videos del momento especial para que seas parte de la emoción de tu equipo.',
+  },
 ]
 
 // ─── Testimonials ──────────────────────────────────────────
@@ -219,7 +229,7 @@ export default function EmpresasPage() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {pasos.map((paso, i) => (
               <motion.div
                 key={paso.number}
